@@ -316,4 +316,16 @@ public class ProxyAcceptCacheSyncIT
         k3po.finish();
     }
 
+    @Test
+    @Specification({
+        "${streams}/polling.different.auth.headers/accept/client",
+        "${streams}/polling.different.auth.headers/accept/server",
+    })
+    public void pollingDifferentAuthHeaders() throws Exception
+    {
+        k3po.start();
+        k3po.notifyBarrier("ROUTED_PROXY");
+        k3po.finish();
+    }
+
 }
