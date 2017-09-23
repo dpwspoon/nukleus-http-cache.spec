@@ -138,6 +138,30 @@ public class ProxyAcceptCacheSyncIT
 
     @Test
     @Specification({
+        "${streams}/debounce.cache.sync.5.clients/accept/client",
+        "${streams}/debounce.cache.sync.5.clients/accept/server",
+    })
+    public void shouldDebounceCacheSync5Clients() throws Exception
+    {
+        k3po.start();
+        k3po.notifyBarrier("ROUTED_PROXY");
+        k3po.finish();
+    }
+
+    @Test
+    @Specification({
+        "${streams}/debounce.cache.sync.5.clients.on.already.cached.response/accept/client",
+        "${streams}/debounce.cache.sync.5.clients.on.already.cached.response/accept/server",
+    })
+    public void shouldDebounceCacheSync5ClientsOnAlreadyCachedResponse() throws Exception
+    {
+        k3po.start();
+        k3po.notifyBarrier("ROUTED_PROXY");
+        k3po.finish();
+    }
+
+    @Test
+    @Specification({
         "${streams}/proxy.request.and.follow.304/accept/client",
         "${streams}/proxy.request.and.follow.304/accept/server",
     })
