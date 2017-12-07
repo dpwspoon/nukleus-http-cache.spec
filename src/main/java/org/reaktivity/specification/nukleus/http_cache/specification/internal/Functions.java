@@ -17,6 +17,8 @@ package org.reaktivity.specification.nukleus.http_cache.specification.internal;
 
 import static java.lang.System.currentTimeMillis;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -24,6 +26,9 @@ import java.util.Date;
 import java.util.Random;
 import java.util.TimeZone;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import org.kaazing.k3po.lang.el.Function;
 import org.kaazing.k3po.lang.el.spi.FunctionMapperSpi;
@@ -155,5 +160,55 @@ public final class Functions
                 break;
         }
         return offset;
+    }
+
+    @Function
+    public static byte[] gzip(String string) throws IOException
+    {
+        byte[] input = string.getBytes();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(input.length);
+        Deflater deflator = new Deflater();
+        deflator.setLevel(Deflater.BEST_COMPRESSION);
+
+        deflator.setInput(input);
+        deflator.finish();
+
+        byte[] buf = new byte[1024];
+        while (!deflator.finished())
+        {
+            int count = deflator.deflate(buf);
+            bos.write(buf, 0, count);
+        }
+        bos.close();
+
+        return bos.toByteArray();
+    }
+
+    @Function
+    public static String lengthOf(byte[] array) throws IOException
+    {
+        return Integer.toString(array.length);
+    }
+
+    @Function
+    public static byte[] ungzip(
+        byte[] compressedData,
+        int off,
+        int len) throws IOException, DataFormatException
+    {
+        Inflater inflator = new Inflater();
+        inflator.setInput(compressedData, off, len);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(compressedData.length);
+
+        byte[] buf = new byte[1024];
+        while (!inflator.finished())
+        {
+            int count = inflator.inflate(buf);
+            bos.write(buf, 0, count);
+        }
+        bos.close();
+
+        return bos.toByteArray();
     }
 }

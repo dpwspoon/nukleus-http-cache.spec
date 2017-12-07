@@ -127,6 +127,18 @@ public class EdgeArchProxyConnectIT
 
     @Test
     @Specification({
+        "${streams}/inject.and.update.stale-while-revalidate/connect/client",
+        "${streams}/inject.and.update.stale-while-revalidate/connect/server",
+    })
+    public void shouldInjectAndUpdateStaleWhileRevalidate() throws Exception
+    {
+        k3po.start();
+        k3po.notifyBarrier("ROUTED_PROXY");
+        k3po.finish();
+    }
+
+    @Test
+    @Specification({
         "${streams}/cache.and.poll.on.surrogate.max-age.when.fresh.ext/connect/client",
         "${streams}/cache.and.poll.on.surrogate.max-age.when.fresh.ext/connect/server",
     })
